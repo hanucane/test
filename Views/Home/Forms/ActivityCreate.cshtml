@@ -1,0 +1,79 @@
+@using Microsoft.AspNetCore.Http
+@model Activities
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Dojo Activity Center</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+        
+    <ul class="navbar-nav">
+        <li class="nav-item active">
+            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="/logout">Log Out <span class="sr-only">(current)</span></a>
+        </li>
+    </ul>
+  </div>
+</nav>
+    <h1>Create an Activity!</h1>
+    <form action="/createactivity" method="post">
+        <div class="form-group row">
+            <input type="hidden" asp-for="CreatorId" value='@Context.Session.GetInt32("user")'>
+            <div class="col-1">
+                <label asp-for="title">Title: </label>
+            </div>
+            <div class="col-4">
+                <input type="text" class="form-control" asp-for="title" placeholder="Enter Title">
+                <span asp-validation-for="title"></span>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-1">
+                <label asp-for="event_time">Time: </label>
+            </div>
+            <div class="col-4">
+                <input type="time" class="form-control" asp-for="event_time">
+                <span asp-validation-for="event_time"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-1">
+                <label asp-for="event_date">Date: </label>
+            </div>
+            <div class="col-4">
+                <input type="date" class="form-control" asp-for="event_date" placeholder="Enter Title">
+                <span asp-validation-for="event_date"></span>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-1">
+                <label for="duration">Duration: </label>
+            </div>
+            <div class="col-2">
+                <input type="int" class="form-control" name="duration">
+            </div>
+            <div class="col-2">
+                <label class="select">
+                    <select class="form-control" name="duration_units">
+                        <option selected="" disabled="">Units</option> 
+                        <option value="Minutes">Minutes</option>
+                        <option value="Hours">Hours</option>
+                        <option value="Days">Days</option>
+                    </select>
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="description">Description: </label>
+            <textarea rows=4 asp-for="description" class="form-control"></textarea>
+            <span asp-validation-for="description"></span>
+        </div>
+        <span>@ViewBag.error</span>
+        <div class="row justify-content-end">
+            <button type="submit" class="btn btn-warning">Create Activity</button>
+        </div>
+    </form>

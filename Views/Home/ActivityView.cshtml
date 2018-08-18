@@ -1,0 +1,55 @@
+@using Microsoft.AspNetCore.Http
+@model Activities
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Dojo Activity Center</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+        
+    <ul class="navbar-nav">
+        <li class="nav-item active">
+            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="/logout">Log Out <span class="sr-only">(current)</span></a>
+        </li>
+    </ul>
+  </div>
+</nav>
+@foreach(var x in @ViewBag.activity){
+<div class="row" style="margin-top: 50px;">
+    <div class="col-8">
+        <h1>@x.title</h1>
+    </div>
+    <div class="col-4">
+        @if(@Context.Session.GetInt32("user") == @x.Creator.id){<a href="/activity_delete/@x.id" class="btn btn-warning">Delete Event</a>;}
+        @{
+            bool InList = false;
+            foreach(var y in x.Participant){
+                if(@Context.Session.GetInt32("user") == @y.User.id){
+                    InList = true;
+                    <a href="/delete_rsvp/@x.id" class="btn btn-danger">Leave</a>;
+                    break;
+                }  
+            }
+            if(InList == false){<a href="/add_rsvp/@x.id" class="btn btn-success">Join</a>;};
+        }
+    </div>
+</div>
+<div class="row justify-content-center" style="margin-top: 30px;">
+    <div class="col-10">
+        <p><b>Event Coordinator:</b> @x.Creator.first_name @x.Creator.last_name</p>
+        <p><b>Description</b></p>
+        <p>@x.description</p>
+        <p><b>Participants</b></p>
+        <ul style="list-style: none;">
+            @foreach(var y in x.Participant){
+                <li>@y.User.first_name @y.User.last_name</li>;
+            }
+        </ul>
+    </div>
+</div>;
+}

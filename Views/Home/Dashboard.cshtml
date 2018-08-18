@@ -1,0 +1,75 @@
+@using Microsoft.AspNetCore.Http
+@model Activities
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Dojo Activity Center</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+        <span class="navbar-text">
+            Welcome @Context.Session.GetString("user_name")!
+        </span>
+    <ul class="navbar-nav">
+        <li class="nav-item active">
+            <a class="nav-link" href="/logout">Log Out <span class="sr-only">(current)</span></a>
+        </li>
+    </ul>
+  </div>
+</nav>
+<div class="row justify-content-center">
+    <div class="col-11">
+        <table class="table" style="margin-top: 20px;">
+            <thead class="thead-dark">
+                <tr>
+                <th style="width:25%">Activity</th>
+                <th style="width:20%">Date and Time</th>
+                <th style="width:10%">Duration</th>
+                <th style="width:15%">Event Coordinator</th>
+                <th style="width:10%">Number of Participants</th>
+                <th style="width:20%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var x in @ViewBag.activity){
+                    <tr>
+                        <th scope="row"><a href="/activity/@x.id">@x.title</a> </th>
+                        <td>@x.event_date.ToShortDateString() at @x.event_time.ToShortTimeString()</td>
+                        <td>@if(x.duration >= 60){
+                            var event_duration = x.duration/60;
+                            if(event_duration >= 24){
+                                event_duration = event_duration/24;
+                                <p>@event_duration Days</p>;
+                            }
+                            else{
+                                <p>@event_duration Hours</p>;
+                            };
+                            }
+                            else{<p>@x.duration Minutes</p>;} </td>
+                        <td>@x.Creator.first_name @x.Creator.last_name</td>
+                        <td>@x.Participant.Count</td>
+                        <td>
+                            @if(@Context.Session.GetInt32("user") == @x.Creator.id){<a href="/activity_delete/@x.id">Delete Event</a>;}
+                            @{
+                                bool InList = false;
+                                foreach(var y in x.Participant){
+                                    if(@Context.Session.GetInt32("user") == @y.User.id){
+                                        InList = true;
+                                        <a href="/delete_rsvp/@x.id">Leave</a>;
+                                        break;
+                                    }  
+                                }
+                                if(InList == false){<a href="/add_rsvp/@x.id">Join</a>;};
+                            }
+                        </td>
+                    </tr>;
+                }
+                    
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row justify-content-end">
+    <a class="btn btn-success" href="/new" style="margin-right: 50px;">New Activity</a>
+</div>
